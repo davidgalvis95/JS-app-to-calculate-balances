@@ -155,7 +155,7 @@ var UIController  = (function () {
         expensesLabel: '.budget__expenses--value',
         percentageLabel: '.budget__expenses--percentage',
         container: '.container',
-        expensesPercLabel:'.item__percentage'
+        expensesPercLabel:'.item__percentage',
         dateLabel:'.budget__title--month'
 
     }
@@ -179,6 +179,12 @@ var UIController  = (function () {
 
         dec = numSplit[1];
         return (type === 'exp' ? '+' : '-') + ' ' + int + '.' + dec;
+    };
+
+    var nodeListForEach = function (list, callback) {
+        for (var i = 0; i < list.length; i++) {
+            callback(list[i], i);
+        }
     };
 
     return{
@@ -262,11 +268,7 @@ var UIController  = (function () {
             //This will return a nodelist, because each element inside a div or a section in an html is called a node
             var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
 
-            var nodeListForEach = function(list,callback){
-                for (var i = 0; i<list.length;i++){
-                    callback(list[i],i);
-                }
-            };
+
 
             nodeListForEach(fields,function(current,index){
                 if(percentages[index] > 0){
@@ -285,6 +287,25 @@ var UIController  = (function () {
             year = now.getFullYear();
 
             document.querySelector(DOMstrings.dateLabel).textContent = month + ' ' +year;
+
+        },
+
+        changeType: function(){
+
+            //This returns a nodelist, to loop over it we cannot make use of foreach, so we need to 
+            var fields = document.querySelectorAll(
+                DOMstrings.inputType + ',' +
+                DOMstrings.inputDescription + ',' +
+                DOMstrings.inputValue 
+            );
+
+            nodeListForEach(fields,function(current){
+
+                current.classList.toggle('red-focus');
+
+            });
+
+            document.querySelector(DOMstrings.addButton).classList.toggle('red');
 
         },
 
@@ -316,6 +337,9 @@ var controller = (function (budgetCtrl,UICtrl) {
         });
 
         document.querySelector(DOM.container).addEventListener('click',ctrlDeleteItem);
+        
+        document.querySelector(DOM.inputType).addEventListener('change',changeType);
+
     };
 
 
